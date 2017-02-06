@@ -29,7 +29,7 @@ _______
 	```
 	$ cut -f 3 fang_et_al_genotypes.txt | uniq -c
 	```
-		- This counted the occurrence of each group, and since I know which ones I want to subset, I can add up the numbers. Counting the three groups + the header = 1574
+	- This counted the occurrence of each group, and since I know which ones I want to subset, I can add up the numbers. Counting the three groups + the header = 1574
 4. Next I wanted to subset the data for the maize groups:
 	```
 	$ awk -F "\t" -v OFS="\t" 'NR==1 || $3 == "ZMMIL" || $3 == "ZMMLR" || $3 == "ZMMMR" ' file
