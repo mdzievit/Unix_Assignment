@@ -66,9 +66,24 @@ _______
 	```
 	$ tail -n +4 file > file
 	```
+	- Did this with the **snp\_position.txt** file to remove the header, created the file **nohead\_snp\_position.txt**
+	- Compared the lines and both files had the same number of lines: 983
 	- I am not going to create a new header file, because I can just take it from the original later.
-5. Created new folders **Maize** and **Tesointe** to improve organization
+###Improved Organization
+1. Created new folders **Maize** and **Tesointe** to improve organization
 	```
 	$ mv *Maize* toDest
 	```
-
+###Joining Files
+1. Combine the files with **snp\_position.txt** file
+	- I am working on windows, so I needed to remove the CR from my first file. I tested this to see if it would happen and it messed up the join. So I created a new file which has the CR removed: **noCR\_nohead\_snp\_positions.txt**
+	```
+	$ sed 's/\r//' noHead_snp_position.txt > file
+	```
+	- Used the join file to combine the 2 files and created **joined\_Maize\_genotypes.txt**
+	```
+	$ join -t $'\t' -1 1 -1 1 noCR_noHead_snp_position.txt noHead_t_Maize_genotypes.txt > file
+	```
+	- Checked the number of columns to make sure the joined worked: Expected 1588 (1574 + 15 - 1) Observed 1588
+2. Did the above data processing for the teosinte files and created **joined\_teosinte\_genotypes.txt**
+	- Expected columns: 990	Observed columns: 990
