@@ -30,7 +30,10 @@ _______
 	$ cut -f 3 fang_et_al_genotypes.txt | uniq -c
 	```
 	- This counted the occurrence of each group, and since I know which ones I want to subset, I can add up the numbers. Counting the three groups + the header = 1574
-4. Next I wanted to subset the data for the maize groups:
+
+###Data Transformation
+
+1. Next I wanted to subset the data for the maize groups:
 	```
 	$ awk -F "\t" -v OFS="\t" 'NR==1 || $3 == "ZMMIL" || $3 == "ZMMLR" || $3 == "ZMMMR" ' file
 	```
@@ -39,10 +42,23 @@ _______
 	```
 	$ wc maize_genotypes.txt
 	```
-5. Next, I wanted to subset the data for the teosinte groups:
+2. Next, I wanted to subset the data for the teosinte groups:
 	- I sent the standard output to a new file: **teosinte_genotypes.txt**
 	- I counted the number of lines in the new file to make sure it matched the expected number of groups (975 vs 975) which includes the header
-6. Data files are ready to be transformed using the supplied program
+3. Data files are ready to be transformed using the supplied program
 	- Standard output sent to **t\_Maize_genotypes.txt**
 	- Standard output sent to **t\_teosinte_genotypes.txt**
+4. Analyze the files for header information and determine how to join with the SNP positions file
+	- **t\_maize_genotypes.txt**
+		- This file has 1574 columns, and 986 rows. From out previous analysis, we know that the snp_positions file has 984 lines, so there are 2 extra rows in our transformed file.
+		- Looking at the head command, we can see that there are rows for Samp_ID, JG_OTU, Group_iD, then what looks like the SNP_ID. I know this is the SNP_ID because row 4 first entry matches the first entry for SNP_ID on the snp_position file
+	- Using the code below, I skipped the first 3 header lines and checked the 2 files to make sure they were sorted by SNP_ID
+	```
+	$ awk 'NR == 1 || NR == 2 || NR == 3; NR > 3 {print $0 | "sort -c"}' file
+	```
+	- This confirmed the files are sorted by SNP_ID
+	- Next, I checked the **snp\_positions.txt** file to make sure it was sorted by SNP_ID, which it was.
+	```
+	$ awk 'NR == 1 ; NR > 1 {print | "sort"}' snp_position.txt | head -n 3
+	```
 
