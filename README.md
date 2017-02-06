@@ -67,4 +67,8 @@ _______
 	$ tail -n +4 file > file
 	```
 	- I am not going to create a new header file, because I can just take it from the original later.
+5. Created new folders **Maize** and **Tesointe** to improve organization
+	```
+	$ mv *Maize* toDest
+	```
 
