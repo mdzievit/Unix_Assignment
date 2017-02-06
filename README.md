@@ -87,3 +87,14 @@ _______
 	- Checked the number of columns to make sure the joined worked: Expected 1588 (1574 + 15 - 1) Observed 1588
 2. Did the above data processing for the teosinte files and created **joined\_teosinte\_genotypes.txt**
 	- Expected columns: 990	Observed columns: 990
+
+###Subsetting Files
+1. Sorted the joined files by chrom and then pos
+```
+$ sort -k3,4n joined_teosinte_genotypes.txt > file
+```
+	- did this for both the maize and teosinte joined files
+	- Created 2 news files: **sorted\_joined\_teosinte\_genotypes.txt**
+2. 
+
+
