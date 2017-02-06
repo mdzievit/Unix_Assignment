@@ -61,4 +61,10 @@ _______
 	```
 	$ awk 'NR == 1 ; NR > 1 {print | "sort"}' snp_position.txt | head -n 3
 	```
+	- Since the header files of the transformed files is going to get in the way, I am going to remove them, and put it into a seperate header file to rejoin later. Created 2 new files: 
+	**noHead\_t\_teosinte\_genotypes.txt** and **noHead\_t\_Maize\_genotypes.txt**
+	```
+	$ tail -n +4 file > file
+	```
+	- I am not going to create a new header file, because I can just take it from the original later.
 
