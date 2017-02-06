@@ -34,7 +34,7 @@ _______
 	```
 	$ awk -F "\t" -v OFS="\t" 'NR==1 || $3 == "ZMMIL" || $3 == "ZMMLR" || $3 == "ZMMMR" ' file
 	```
-	- I sent the standard output to a new file: **maize_genotypes.txt**
+	- I sent the standard output to a new file: **Maize_genotypes.txt**
 	- I counted the number of lines in the new file to make sure it matched the expected number of groups
 	```
 	$ wc maize_genotypes.txt
@@ -42,3 +42,7 @@ _______
 5. Next, I wanted to subset the data for the teosinte groups:
 	- I sent the standard output to a new file: **teosinte_genotypes.txt**
 	- I counted the number of lines in the new file to make sure it matched the expected number of groups (975 vs 975) which includes the header
+6. Data files are ready to be transformed using the supplied program
+	- Standard output sent to **t\_Maize_genotypes.txt**
+	- Standard output sent to **t\_teosinte_genotypes.txt**
+
