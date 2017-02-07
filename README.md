@@ -66,7 +66,10 @@ _______
 	```
 	$ tail -n +4 file > file
 	```
-	- Did this with the **snp\_position.txt** file to remove the header, created the file **nohead\_snp\_position.txt**
+	- Did this with the **snp\_position.txt** file to remove the header, and removed excess columns. created the file **nohead\_reduced\_snp\_position.txt**
+	```
+	$ cut -f 1,3,4 snp_position.txt | tail -n +2 > noHead_reduced_snp_position.txt
+	```
 	- Compared the lines and both files had the same number of lines: 983
 	- I am not going to create a new header file, because I can just take it from the original later.
 ###Improved Organization
@@ -76,25 +79,38 @@ _______
 	```
 ###Joining Files
 1. Combine the files with **snp\_position.txt** file
-	- I am working on windows, so I needed to remove the CR from my first file. I tested this to see if it would happen and it messed up the join. So I created a new file which has the CR removed: **noCR\_nohead\_snp\_positions.txt**
+	- remove the CR from the end of the reduced snp position file
 	```
-	$ sed 's/\r//' noHead_snp_position.txt > file
+	$ sed 's/\r//' noHead_reduced_snp_position.txt > noCR_noHead_reduced_snp_position.txt
 	```
-	- Used the join file to combine the 2 files and created **joined\_Maize\_genotypes.txt**
+	- Used the join file to combine the 2 files and piped that to sort them by chr and pos, and also piped that to remove snps that are unknown or multiple (non-numeric): created **sorted\_joined\_Maize\_genotypes.txt** and the corresponding teosinte file
 	```
-	$ join -t $'\t' -1 1 -1 1 noCR_noHead_snp_position.txt noHead_t_Maize_genotypes.txt > file
+	$ join -t $'\t' -1 1 -1 1 noCR_noHead_reduced_snp_position.txt noHead_t_teosinte_genotypes.txt | sort -k2,2n -k3,3n | awk ' function isnum(x){return(x==x+0)} { if (isnum($2) && isnum($3)) print $0 > "rmMS_sorted_joined_teosinte_genotypes.txt";}'
 	```
-	- Checked the number of columns to make sure the joined worked: Expected 1588 (1574 + 15 - 1) Observed 1588
-2. Did the above data processing for the teosinte files and created **joined\_teosinte\_genotypes.txt**
-	- Expected columns: 990	Observed columns: 990
-
+	- Decided to create the reverse file here. Also, replaced the ? character with - here as well	
+	```
+	$ join -t $'\t' -1 1 -1 1 noCR_noHead_reduced_snp_position.txt noHead_t_teosinte_genotypes.txt | sort -k2,2n -k3,3nr | sed 's/?/-/g' | awk ' function isnum(x){return(x==x+0)} { if (isnum($2) && isnum($3)) print $0 > "rmMS_rev_sorted_joined_teosinte_genotypes.txt";}' 
+	```	
 ###Subsetting Files
-1. Sorted the joined files by chrom and then pos
-```
-$ sort -k3,4n joined_teosinte_genotypes.txt > file
-```
-	- did this for both the maize and teosinte joined files
-	- Created 2 news files: **sorted\_joined\_teosinte\_genotypes.txt**
-2. 
-
-
+1. Subset each file
+	- Created 10 files with the following prefix: **teosinte\_genotypes\_chr0 # .txt**
+	```
+	$ awk '{for (i=1; i<=10; i++) if ($2==i && i != 10) print $0 > "teosinte_genotypes_chr0"i".txt"; else if ($2==i && i == 10) print $0 > "teosinte_genotypes_chr"i".txt";}' rmMS_sorted_joined_teosinte_genotypes.txt
+	```
+	- Used the same code to create the same files but for maize: **maize\_genotypes\_chr # .txt**
+	- Used the column extract/uniq code from data processing part 3 to spot check each file and make sure that only that chr was present
+	- Changed file names to subset the reverse folder. Again spot checked to make sure it was in the right order and the characters change **teosinte\_rev\_genotypes\_chr0 # .txt**
+	```
+	$ awk ' {for (i=1; i<=10; i++) if ($2==i && i != 10) print $0 > "teosinte_rev_genotypes_chr0"i".txt"; else if ($2==i && i == 10) print $0 > "teosinte_rev_genotypes_chr"i".txt";}' rmMS_rev_sorted_joined_teosinte_genotypes.txt
+	```
+###Final Location of Files
+1. Two folders exits **Maize** and **Teosinte**. Within these folders are 20 files, 10 with **rev** in the same are in reverse order, 10 without are in forward order.
+2. Included in the folder is the header information as that was removed for analysis. 
+	- Header for the SNP Information: **teosinte\_combinedHeader.txt**. Did the same for maize.
+	```
+	$ echo -e "SNP_ID\nChrom\nPos" > teosinte_combinedHeader.txt | awk '{print $1}' teosinte_genotypes.txt | tail -n +2 >> teosinte_combinedHeader.txt
+	```
+	- Created the genotype information file that we removed from transposed file: **teosinte\_genotype\_info.txt** Did the same thing for maize
+	```
+	$ awk '{print $1 "\t" $2 "\t" $3}' teosinte_genotypes.txt > teosinte_genotype_info.txt
+	```
